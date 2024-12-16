@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>蜂窝图生成器</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div id="canvasContainer">
+      <canvas id="canvas" width="1920" height="1080"></canvas>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <h1>蜂窝图生成器</h1>
+        <button id="themeToggle" class="theme-toggle" title="切换主题">
+          <span class="theme-icon">☀️</span>
+        </button>
+      </div>
+
+      <div class="section config-section">
+        <div class="section-header" id="configHeader">
+          <h2>配置设置</h2>
+          <button class="toggle-btn">▼</button>
+          <button class="export-btn" onclick="exportImage()">导出图片</button>
+          <button class="danger-btn hidden" id="clearCanvasBtn" onclick="clearCanvas()">清空画布</button>
+        </div>
+        <div class="section-content" id="configContent" style="display: none;">
+          <div class="config-item">
+            <label>起始X坐标:</label>
+            <input type="number" id="startX" />
+          </div>
+          <div class="config-item">
+            <label>起始Y坐标:</label>
+            <input type="number" id="startY" />
+          </div>
+          <div class="config-item">
+            <label>六边形宽度:</label>
+            <input type="number" id="hexWidth" />
+          </div>
+          <div class="config-item">
+            <label>六边形高度:</label>
+            <input type="number" id="hexHeight" />
+          </div>
+          <div class="config-item">
+            <label>行数:</label>
+            <input type="number" id="rows" />
+          </div>
+          <div class="config-item">
+            <label>列数:</label>
+            <input type="number" id="cols" />
+          </div>
+          <div class="config-item">
+            <label>画布宽度:</label>
+            <input type="number" id="canvasWidth" />
+          </div>
+          <div class="config-item">
+            <label>画布高度:</label>
+            <input type="number" id="canvasHeight" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section gallery-section">
+        <div class="section-header">
+          <h2>图片库</h2>
+          <div class="gallery-buttons">
+            <button onclick="document.getElementById('imageUpload').click()">上传图片</button>
+            <button onclick="autoFillImages()">铺设图片</button>
+            <button class="danger-btn hidden" id="clearGalleryBtn" onclick="clearGallery()">清空图库</button>
+          </div>
+        </div>
+        <div class="image-list custom-scrollbar" id="imageList">
+          <!-- 图片将通过JavaScript动态加载 -->
+        </div>
+        <input type="file" id="imageUpload" accept="image/*" multiple />
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div id="imageEditor">
+    <canvas id="editorCanvas"></canvas>
+    <div>
+      <button onclick="saveEdit()">保存</button>
+      <button onclick="cancelEdit()">取消</button>
+    </div>
+  </div>
+
+  <!-- 添加自定义确认对话框 -->
+  <div class="confirm-dialog" id="confirmDialog">
+    <div class="confirm-content">
+      <div class="confirm-message"></div>
+      <div class="confirm-buttons">
+        <button class="confirm-btn">确定</button>
+        <button class="cancel-btn">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

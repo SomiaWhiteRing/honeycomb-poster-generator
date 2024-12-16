@@ -1,0 +1,419 @@
+/* 主题变量 */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --bg-tertiary: #e8e8e8;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --border-color: #dddddd;
+  --accent-color: #4a90e2;
+  --scrollbar-thumb: #cccccc;
+  --scrollbar-track: #f1f1f1;
+}
+
+/* 深色主题 */
+.dark-theme {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2a2a2a;
+  --bg-tertiary: #333333;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --border-color: #444444;
+  --accent-color: #5c9cf5;
+  --scrollbar-thumb: #444444;
+  --scrollbar-track: #2a2a2a;
+}
+
+/* 基础样式 */
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* 画布容器 */
+#canvasContainer {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#canvas {
+  border: 2px solid var(--border-color);
+  background: var(--bg-primary);
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* 侧边栏 */
+.sidebar {
+  width: 360px;
+  background: var(--bg-secondary);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h1 {
+  margin: 0;
+  font-size: 1.2em;
+  color: var(--text-primary);
+}
+
+/* 主题切换按钮 */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+}
+
+.theme-toggle:hover {
+  background: var(--bg-tertiary);
+}
+
+.theme-icon {
+  font-size: 1.2em;
+}
+
+/* 区块样式 */
+.section {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.section-header {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-secondary);
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1em;
+  flex: 1;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: transform 0.3s;
+  transform: rotate(0deg);
+}
+
+.toggle-btn.expanded {
+  transform: rotate(180deg);
+}
+
+.section-content {
+  padding: 15px;
+  background: var(--bg-tertiary);
+}
+
+/* 配置域 */
+.config-section {
+  flex-shrink: 0;
+}
+
+.config-item {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.config-item input {
+  width: 80px;
+  padding: 4px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 3px;
+}
+
+.config-item label {
+  margin-right: 10px;
+  color: var(--text-secondary);
+}
+
+/* 图片库区域 */
+.gallery-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.gallery-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.image-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 2px dashed transparent;
+  transition: border-color 0.3s;
+  width: 100%;
+  position: relative;
+}
+
+.image-list:empty::before {
+  content: "拖放图片到这里\A或点击上方按钮上传";
+  white-space: pre;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 0.9em;
+  pointer-events: none;
+  background: var(--bg-secondary);
+  border: 2px dashed var(--border-color);
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-list.dragover:empty::before {
+  border-color: transparent;
+  color: var(--accent-color);
+}
+
+/* 自定义滚动条 */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 4px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+.image-list.dragover {
+  border-color: var(--accent-color);
+}
+
+/* 图片项 */
+.image-item-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.image-item {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: move;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  transition: transform 0.2s;
+}
+
+.image-item:hover {
+  transform: scale(1.05);
+  border-color: var(--accent-color);
+}
+
+.delete-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: none;
+  padding: 0;
+  line-height: 24px;
+  font-size: 14px;
+}
+
+.image-item-container:hover .delete-button {
+  display: block;
+}
+
+#imageUpload {
+  display: none;
+}
+
+/* 按钮样式 */
+button {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background: var(--accent-color);
+  color: white;
+}
+
+/* 图片编辑器 */
+#imageEditor {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-secondary);
+  padding: 20px;
+  border-radius: 8px;
+  z-index: 1000;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+
+/* 危险按钮样式 */
+.danger-btn {
+  background: var(--bg-tertiary);
+  color: #ff4d4d;
+  border: 1px solid #ff4d4d;
+}
+
+.danger-btn:hover {
+  background: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 确认对话框样式 */
+.confirm-dialog {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.confirm-content {
+  background: var(--bg-secondary);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.confirm-dialog.active .confirm-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.confirm-message {
+  color: var(--text-primary);
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.confirm-buttons button {
+  min-width: 80px;
+  padding: 8px 16px;
+}
+
+.confirm-buttons .confirm-btn {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+}
+
+.confirm-buttons .confirm-btn:hover {
+  background: var(--accent-color);
+  filter: brightness(1.1);
+}
+
+.confirm-buttons .cancel-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+}
+
+.confirm-buttons .cancel-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}

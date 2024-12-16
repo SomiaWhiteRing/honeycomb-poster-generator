@@ -542,3 +542,43 @@ button:hover {
     display: none !important;
   }
 }
+
+/* 重新绘制按钮 */
+.redraw-button {
+  display: block;
+  width: calc(100% - 30px);
+  margin: 15px;
+  padding: 12px;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.redraw-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.redraw-button:active {
+  transform: translateY(0);
+}
+
+/* 禁用状态样式 */
+.config-item input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--bg-tertiary);
+}
+
+.config-section.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.config-section.disabled input {
+  background: var(--bg-tertiary);
+}

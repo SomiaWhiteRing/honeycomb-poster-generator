@@ -28,7 +28,7 @@ function getConfig() {
 }
 
 // 保存配置
-function updateConfig() {
+async function updateConfig() {
   const config = {
     startX: parseInt(document.getElementById("startX").value) || defaultConfig.startX,
     startY: parseInt(document.getElementById("startY").value) || defaultConfig.startY,
@@ -46,10 +46,22 @@ function updateConfig() {
   canvas.width = config.canvasWidth;
   canvas.height = config.canvasHeight;
 
+  // 保存当前的图片数据
+  const oldHexagons = new Map(hexagons.map(hex => [`${hex.row}-${hex.col}`, hex.imageData]));
+
+  // 重新初始化六边形网格
   initHexGrid();
-  render().catch((error) => {
-    console.error("Render failed after config update:", error);
+
+  // 清空画布并绘制新的网格
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hexagons.forEach((hex) => {
+    ctx.strokeStyle = "#444";
+    drawHexagon(hex.x, hex.y, hex.width, hex.height);
+    ctx.stroke();
   });
+
+  // 显示重绘按钮
+  showRedrawButton();
 }
 
 // 添加输入事件监听
@@ -569,6 +581,7 @@ async function autoFillImages() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     preRenderedHexagons.clear();
 
+    // 清空所有六边形
     hexagons.forEach((hex) => {
       hex.imageData = null;
       preRenderedHexagons.delete(`${hex.row}-${hex.col}`);
@@ -578,75 +591,51 @@ async function autoFillImages() {
       ctx.stroke();
     });
 
-    let imageIndices = Array.from({ length: images.length }, (_, i) => i);
-    for (let i = imageIndices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [imageIndices[i], imageIndices[j]] = [imageIndices[j], imageIndices[i]];
-    }
-    let currentImageIndex = 0;
+    // 创建随机池
+    let randomPool = [];
+    const refillPool = () => {
+      randomPool = Array.from({ length: images.length }, (_, i) => i);
+      // 随机打乱
+      for (let i = randomPool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [randomPool[i], randomPool[j]] = [randomPool[j], randomPool[i]];
+      }
+    };
+    refillPool();
 
     const batchSize = 10;
-    for (
-      let i = 0;
-      i < hexagons.length && currentImageIndex < imageIndices.length;
-      i += batchSize
-    ) {
+    for (let i = 0; i < hexagons.length; i += batchSize) {
       const batch = hexagons.slice(i, Math.min(i + batchSize, hexagons.length));
       await Promise.all(
         batch.map(async (hex) => {
-          if (currentImageIndex < imageIndices.length) {
-            const img = images[imageIndices[currentImageIndex++]];
-            const canvas = document.createElement("canvas");
-            const tempCtx = canvas.getContext("2d");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            tempCtx.drawImage(img, 0, 0);
-            hex.imageData = canvas.toDataURL();
+          // 如果随机池为空，重新填充
+          if (randomPool.length === 0) {
+            refillPool();
+          }
+          // 从随机池中取出一个图片索引并移除
+          const imgIndex = randomPool.pop();
+          const img = images[imgIndex];
 
-            try {
-              await saveHexagonToDB(hex);
-              preRenderedHexagons.delete(`${hex.row}-${hex.col}`);
-              await preRenderHexagon(hex);
-              renderHexagon(hex);
-            } catch (error) {
-              console.warn("Failed to save/render hexagon:", error);
-            }
+          const canvas = document.createElement("canvas");
+          const tempCtx = canvas.getContext("2d");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          tempCtx.drawImage(img, 0, 0);
+          hex.imageData = canvas.toDataURL();
+
+          try {
+            await saveHexagonToDB(hex);
+            preRenderedHexagons.delete(`${hex.row}-${hex.col}`);
+            await preRenderHexagon(hex);
+            renderHexagon(hex);
+          } catch (error) {
+            console.warn("Failed to save/render hexagon:", error);
           }
         })
       );
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
-
-    if (currentImageIndex >= imageIndices.length) {
-      for (let i = currentImageIndex; i < hexagons.length; i += batchSize) {
-        const batch = hexagons.slice(
-          i,
-          Math.min(i + batchSize, hexagons.length)
-        );
-        await Promise.all(
-          batch.map(async (hex, index) => {
-            const imgIndex = imageIndices[index % imageIndices.length];
-            const img = images[imgIndex];
-            const canvas = document.createElement("canvas");
-            const tempCtx = canvas.getContext("2d");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            tempCtx.drawImage(img, 0, 0);
-            hex.imageData = canvas.toDataURL();
-
-            try {
-              await saveHexagonToDB(hex);
-              preRenderedHexagons.delete(`${hex.row}-${hex.col}`);
-              await preRenderHexagon(hex);
-              renderHexagon(hex);
-            } catch (error) {
-              console.warn("Failed to save/render hexagon:", error);
-            }
-          })
-        );
-        await new Promise((resolve) => setTimeout(resolve, 0));
-      }
-    }
+    updateClearButtonsVisibility();
   }
 }
 
@@ -844,7 +833,7 @@ function toggleTheme() {
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
 
-// 加载保存的主题
+// 加载保���的主题
 function loadTheme() {
   const savedTheme = localStorage.getItem('theme') || 'light'; // 默认为浅色主题
   if (savedTheme === 'dark') {
@@ -882,7 +871,7 @@ configHeader.addEventListener('click', (e) => {
   }
 });
 
-// 检测设备��型
+// 检测设备类型
 function isMobileDevice() {
   return (window.innerWidth <= 768) ||
     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -914,6 +903,9 @@ window.onload = async function () {
   addConfigListeners();
   initHexGrid();
   initConfigState();
+
+  // 添加重绘按钮事件监听
+  document.getElementById('redrawButton').addEventListener('click', redraw);
 
   try {
     await initDB();
@@ -970,3 +962,73 @@ async function copyLink() {
 
 // 检测设备类型
 // ... existing code ... 
+
+// 禁用配置区域
+function disableConfigSection() {
+  const configSection = document.querySelector('.config-section');
+  configSection.classList.add('disabled');
+  const inputs = configSection.querySelectorAll('input');
+  inputs.forEach(input => input.disabled = true);
+}
+
+// 启用配置区域
+function enableConfigSection() {
+  const configSection = document.querySelector('.config-section');
+  configSection.classList.remove('disabled');
+  const inputs = configSection.querySelectorAll('input');
+  inputs.forEach(input => input.disabled = false);
+}
+
+// 显示重绘按钮
+function showRedrawButton() {
+  const redrawButton = document.getElementById('redrawButton');
+  redrawButton.classList.remove('hidden');
+}
+
+// 隐藏重绘按钮
+function hideRedrawButton() {
+  const redrawButton = document.getElementById('redrawButton');
+  redrawButton.classList.add('hidden');
+}
+
+// 重新绘制函数
+async function redraw() {
+  hideRedrawButton();
+  disableConfigSection();
+
+  try {
+    // 清空预渲染的缓存
+    preRenderedHexagons.clear();
+
+    // 从数据库重新加载六边形数据
+    await new Promise((resolve) => {
+      const transaction = db.transaction(["hexagons"], "readonly");
+      const store = transaction.objectStore("hexagons");
+      const request = store.getAll();
+
+      request.onsuccess = () => {
+        const savedHexagons = request.result;
+        if (savedHexagons.length > 0) {
+          const hexMap = new Map(
+            savedHexagons.map((hex) => [`${hex.row}-${hex.col}`, hex])
+          );
+
+          hexagons.forEach((hex) => {
+            const savedHex = hexMap.get(`${hex.row}-${hex.col}`);
+            if (savedHex) {
+              hex.imageData = savedHex.imageData;
+            }
+          });
+        }
+        resolve();
+      };
+    });
+
+    // 重新渲染整个画布
+    await render();
+  } catch (error) {
+    console.error("重新绘制失败:", error);
+  } finally {
+    enableConfigSection();
+  }
+}

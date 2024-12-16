@@ -451,7 +451,7 @@ function createDragPreview() {
 // 导出图片
 function exportImage() {
   const link = document.createElement("a");
-  link.download = "2024_games_hexagon.png";
+  link.download = "result.png";
   link.href = canvas.toDataURL();
   link.click();
 }
@@ -509,7 +509,7 @@ function showConfirm(message) {
 // 修改清空画布函数
 async function clearCanvas() {
   if (!hexagons.some(hex => hex.imageData)) {
-    return; // 如果画布是空的，直接返回
+    return; // 果画布是空的，直接返回
   }
 
   const confirmed = await showConfirm('确定要清空画布吗？这将删除所有已放置的图片。');
@@ -549,7 +549,7 @@ async function clearGallery() {
     const transaction = db.transaction(["images"], "readwrite");
     const store = transaction.objectStore("images");
     store.clear().onsuccess = () => {
-      // 清空内存中的图片数组和图片列表
+      // 清空内存中的图片数组和图片表
       images = [];
       imageList.innerHTML = '';
       updateClearButtonsVisibility();
@@ -882,8 +882,30 @@ configHeader.addEventListener('click', (e) => {
   }
 });
 
+// 检测设备��型
+function isMobileDevice() {
+  return (window.innerWidth <= 768) ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+// 处理设备检测
+function handleDeviceCheck() {
+  const isMobile = isMobileDevice();
+  document.querySelector('.mobile-notice').style.display = isMobile ? 'block' : 'none';
+  document.querySelector('.container').style.display = isMobile ? 'none' : 'flex';
+}
+
+// 监听窗口大小改变
+window.addEventListener('resize', handleDeviceCheck);
+
 // 初始化
 window.onload = async function () {
+  // 设备检测
+  handleDeviceCheck();
+  if (isMobileDevice()) {
+    return;
+  }
+
   // 主题初始化
   loadTheme();
 
@@ -927,4 +949,24 @@ const originalRender = render;
 render = async function () {
   await originalRender();
   updateClearButtonsVisibility();
-}; 
+};
+
+// 复制链接功能
+async function copyLink() {
+  const link = 'https://hex.shatranj.space/';
+  try {
+    await navigator.clipboard.writeText(link);
+    const button = document.querySelector('.notice-button');
+    button.textContent = '已复制';
+    button.classList.add('copied');
+    setTimeout(() => {
+      button.textContent = '复制访问链接';
+      button.classList.remove('copied');
+    }, 2000);
+  } catch (err) {
+    console.error('复制失败:', err);
+  }
+}
+
+// 检测设备类型
+// ... existing code ... 

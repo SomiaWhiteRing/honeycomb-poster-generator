@@ -2,6 +2,10 @@
 
 一个用于创建蜂窝状图片拼贴的网页应用程序。支持拖放操作、自动布局、主题切换等功能。
 
+## 在线体验
+
+🌐 [https://hex.shatranj.space/](https://hex.shatranj.space/)
+
 ## 功能特点
 
 - 🖼️ 图片管理

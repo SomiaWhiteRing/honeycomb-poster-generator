@@ -14,6 +14,11 @@ function getUserLanguage() {
 
 // 更新页面文本
 function updatePageLanguage() {
+  if (typeof i18n === 'undefined') {
+    console.error('i18n not loaded');
+    return;
+  }
+
   const elements = document.querySelectorAll('[data-i18n]');
   elements.forEach(element => {
     const key = element.getAttribute('data-i18n');

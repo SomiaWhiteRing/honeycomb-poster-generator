@@ -1,4 +1,4 @@
-const i18n = {
+window.i18n = {
   'zh-CN': {
     title: '蜂窝图生成器',
     mobileNotice: {
@@ -120,7 +120,7 @@ const i18n = {
       confirm: '確認',
       cancel: 'キャンセル',
       clearCanvas: 'キャンバスをクリアしますか？配置された画像がすべて削除されます。',
-      clearGallery: 'ギャラリーをクリアしますか？アップロードされた画像がすべて削除されます。
+      clearGallery: 'ギャラリーをクリアしますか？アップロードされた画像がすべて削除されます。'
     },
     imageEditor: {
       save: '保存',

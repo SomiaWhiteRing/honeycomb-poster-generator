@@ -108,9 +108,9 @@ body {
 }
 
 .section-header {
-  padding: 15px;
+  padding: 12px 15px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
   background: var(--bg-secondary);
 }
@@ -118,7 +118,6 @@ body {
 .section-header h2 {
   margin: 0;
   font-size: 1em;
-  flex: 1;
 }
 
 .toggle-btn {
@@ -176,7 +175,15 @@ body {
 
 .gallery-buttons {
   display: flex;
+  width: 100%;
   gap: 8px;
+}
+
+.gallery-buttons button {
+  flex: 1;
+  white-space: nowrap;
+  padding: 6px 8px;
+  font-size: 0.8em;
 }
 
 .image-list {
@@ -581,4 +588,14 @@ button:hover {
 
 .config-section.disabled input {
   background: var(--bg-tertiary);
+}
+
+/* 配置域 */
+.config-section .section-header {
+  flex-direction: row;
+  align-items: center;
+}
+
+.config-section .section-header h2 {
+  flex: 1;
 }

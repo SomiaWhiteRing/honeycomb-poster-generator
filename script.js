@@ -1,3 +1,38 @@
+let currentLang = 'zh-CN';
+
+// 获取用户语言
+function getUserLanguage() {
+  const lang = navigator.language || navigator.userLanguage;
+  if (lang.startsWith('zh')) {
+    return lang === 'zh-TW' ? 'zh-TW' : 'zh-CN';
+  }
+  if (lang.startsWith('ja')) {
+    return 'ja';
+  }
+  return 'en';
+}
+
+// 更新页面文本
+function updatePageLanguage() {
+  const elements = document.querySelectorAll('[data-i18n]');
+  elements.forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    const keys = key.split('.');
+    let value = i18n[currentLang];
+    for (const k of keys) {
+      value = value[k];
+    }
+    if (element.tagName === 'INPUT' && element.type === 'button') {
+      element.value = value;
+    } else {
+      element.textContent = value;
+    }
+  });
+
+  // 更新页面标题
+  document.title = i18n[currentLang].title;
+}
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const imageList = document.getElementById("imageList");
@@ -524,7 +559,7 @@ async function clearCanvas() {
     return; // 果画布是空的，直接返回
   }
 
-  const confirmed = await showConfirm('确定要清空画布吗？这将删除所有已放置的图片。');
+  const confirmed = await showConfirm(i18n[currentLang].dialog.clearCanvas);
   if (confirmed) {
     hexagons.forEach(hex => {
       hex.imageData = null;
@@ -555,7 +590,7 @@ async function clearGallery() {
     return; // 如果图库是空的，直接返回
   }
 
-  const confirmed = await showConfirm('确定要清空图库吗？这将删除所有上传的图片。');
+  const confirmed = await showConfirm(i18n[currentLang].dialog.clearGallery);
   if (confirmed) {
     // 清空数据库中的图片数据
     const transaction = db.transaction(["images"], "readwrite");
@@ -833,7 +868,7 @@ function toggleTheme() {
   localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
 
-// 加载保���的主题
+// 加载保存的主题
 function loadTheme() {
   const savedTheme = localStorage.getItem('theme') || 'light'; // 默认为浅色主题
   if (savedTheme === 'dark') {
@@ -889,6 +924,10 @@ window.addEventListener('resize', handleDeviceCheck);
 
 // 初始化
 window.onload = async function () {
+  // 设置当前语言
+  currentLang = getUserLanguage();
+  updatePageLanguage();
+
   // 设备检测
   handleDeviceCheck();
   if (isMobileDevice()) {
@@ -949,19 +988,16 @@ async function copyLink() {
   try {
     await navigator.clipboard.writeText(link);
     const button = document.querySelector('.notice-button');
-    button.textContent = '已复制';
+    button.textContent = i18n[currentLang].mobileNotice.copied;
     button.classList.add('copied');
     setTimeout(() => {
-      button.textContent = '复制访问链接';
+      button.textContent = i18n[currentLang].mobileNotice.copyLink;
       button.classList.remove('copied');
     }, 2000);
   } catch (err) {
     console.error('复制失败:', err);
   }
 }
-
-// 检测设备类型
-// ... existing code ... 
 
 // 禁用配置区域
 function disableConfigSection() {

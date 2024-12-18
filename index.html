@@ -3,16 +3,17 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>蜂窝图生成器</title>
+  <title data-i18n="title">蜂窝图生成器</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="i18n.js"></script>
 </head>
 
 <body>
   <div class="mobile-notice">
     <div class="notice-content">
-      <h2>请在电脑上使用</h2>
-      <p>该程序仅支持 PC 端访问</p>
-      <button class="notice-button" onclick="copyLink()">复制访问链接</button>
+      <h2 data-i18n="mobileNotice.title">请在电脑上使用</h2>
+      <p data-i18n="mobileNotice.desc">该程序仅支持 PC 端访问</p>
+      <button class="notice-button" onclick="copyLink()" data-i18n="mobileNotice.copyLink">复制访问链接</button>
     </div>
   </div>
   <div class="container pc-only">
@@ -21,7 +22,7 @@
     </div>
     <div class="sidebar">
       <div class="sidebar-header">
-        <h1>蜂窝图生成器</h1>
+        <h1 data-i18n="title">蜂窝图生成器</h1>
         <button id="themeToggle" class="theme-toggle" title="切换主题">
           <span class="theme-icon">☀️</span>
         </button>
@@ -29,55 +30,58 @@
 
       <div class="section config-section">
         <div class="section-header" id="configHeader">
-          <h2>配置设置</h2>
+          <h2 data-i18n="sidebar.config.title">配置设置</h2>
           <button class="toggle-btn">▼</button>
-          <button class="export-btn" onclick="exportImage()">导出图片</button>
-          <button class="danger-btn hidden" id="clearCanvasBtn" onclick="clearCanvas()">清空画布</button>
+          <button class="export-btn" onclick="exportImage()" data-i18n="sidebar.config.export">导出图片</button>
+          <button class="danger-btn hidden" id="clearCanvasBtn" onclick="clearCanvas()"
+            data-i18n="sidebar.config.clear">清空画布</button>
         </div>
         <div class="section-content" id="configContent" style="display: none;">
           <div class="config-item">
-            <label>起始X坐标:</label>
+            <label data-i18n="sidebar.config.startX">起始X坐标:</label>
             <input type="number" id="startX" />
           </div>
           <div class="config-item">
-            <label>起始Y坐标:</label>
+            <label data-i18n="sidebar.config.startY">起始Y坐标:</label>
             <input type="number" id="startY" />
           </div>
           <div class="config-item">
-            <label>六边形宽度:</label>
+            <label data-i18n="sidebar.config.hexWidth">六边形宽度:</label>
             <input type="number" id="hexWidth" />
           </div>
           <div class="config-item">
-            <label>六边形高度:</label>
+            <label data-i18n="sidebar.config.hexHeight">六边形高度:</label>
             <input type="number" id="hexHeight" />
           </div>
           <div class="config-item">
-            <label>行数:</label>
+            <label data-i18n="sidebar.config.rows">行数:</label>
             <input type="number" id="rows" />
           </div>
           <div class="config-item">
-            <label>列数:</label>
+            <label data-i18n="sidebar.config.cols">列数:</label>
             <input type="number" id="cols" />
           </div>
           <div class="config-item">
-            <label>画布宽度:</label>
+            <label data-i18n="sidebar.config.canvasWidth">画布宽度:</label>
             <input type="number" id="canvasWidth" />
           </div>
           <div class="config-item">
-            <label>画布高度:</label>
+            <label data-i18n="sidebar.config.canvasHeight">画布高度:</label>
             <input type="number" id="canvasHeight" />
           </div>
         </div>
-        <button id="redrawButton" class="redraw-button hidden">重新绘制</button>
+        <button id="redrawButton" class="redraw-button hidden" data-i18n="sidebar.config.redraw">重新绘制</button>
       </div>
 
       <div class="section gallery-section">
         <div class="section-header">
-          <h2>图片库</h2>
+          <h2 data-i18n="sidebar.gallery.title">图片库</h2>
           <div class="gallery-buttons">
-            <button onclick="document.getElementById('imageUpload').click()">上传图片</button>
-            <button onclick="autoFillImages()">铺设图片</button>
-            <button class="danger-btn hidden" id="clearGalleryBtn" onclick="clearGallery()">清空图库</button>
+            <button onclick="document.getElementById('imageUpload').click()"
+              data-i18n="sidebar.gallery.upload">上传图片</button>
+            <button onclick="autoFillImages()" data-i18n="sidebar.gallery.autoFill">铺设图片</button>
+            <button class="danger-btn hidden" id="clearGalleryBtn" onclick="clearGallery()"
+              data-i18n="sidebar.gallery.clear">清空图库</button>
           </div>
         </div>
         <div class="image-list custom-scrollbar" id="imageList">
@@ -104,8 +108,8 @@
   <div id="imageEditor">
     <canvas id="editorCanvas"></canvas>
     <div>
-      <button onclick="saveEdit()">保存</button>
-      <button onclick="cancelEdit()">取消</button>
+      <button onclick="saveEdit()" data-i18n="imageEditor.save">保存</button>
+      <button onclick="cancelEdit()" data-i18n="imageEditor.cancel">取消</button>
     </div>
   </div>
 
